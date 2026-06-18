@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#04070d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Joe Lucky Lotto Picks</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Background stage lighting -->
+    <div class="spotlights">
+      <!-- Blue fan beams from upper-left -->
+      <div class="beam beam-b1"></div>
+      <div class="beam beam-b2"></div>
+      <div class="beam beam-b3"></div>
+      <div class="beam beam-b4"></div>
+      <div class="beam beam-b5"></div>
+      <!-- Gold beams from upper-right -->
+      <div class="beam beam-g1"></div>
+      <div class="beam beam-g2"></div>
+      <!-- Ambient color pools -->
+      <div class="ambient ambient-blue"></div>
+      <div class="ambient ambient-red-side"></div>
+      <div class="ambient ambient-red-bottom"></div>
+      <div class="ambient ambient-gold"></div>
+      <!-- Halftone dot textures -->
+      <div class="dots dots-left"></div>
+      <div class="dots dots-right"></div>
+      <!-- Stage floor light -->
+      <div class="floor-light"></div>
+    </div>
+
+    <!-- Header logos -->
+    <div class="logos">
+      <div class="logo powerball-logo">
+        <span class="logo-power">POWER</span><span class="logo-ball-badge">BALL</span>
+      </div>
+      <div class="logo-divider">|</div>
+      <div class="logo mega-logo">
+        <span class="logo-mega">MEGA</span>
+        <span class="logo-millions">MILLIONS</span>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title-block">
+      <h1 class="day-label" id="dayLabel">SUNDAY</h1>
+      <h1 class="title-main">LUCKY LOTTO</h1>
+      <h1 class="title-picks">&#9733; PICKS &#9733;</h1>
+      <p class="subtitle">Your lucky numbers. Your lucky day.</p>
+    </div>
+
+    <!-- Game selector -->
+    <div class="section-label">SELECT GAME</div>
+    <div class="game-selector">
+      <button class="game-btn active" id="btnPowerball" onclick="selectGame('powerball')">POWERBALL</button>
+      <button class="game-btn" id="btnMega" onclick="selectGame('mega')">MEGA MILLIONS</button>
+    </div>
+    <div class="game-rule" id="gameRule">Pick 5 white balls + 1 red ball or mega ball</div>
+
+    <!-- Balls display -->
+    <div class="section-label balls-label">&#9733; YOUR NUMBERS &#9733;</div>
+    <div class="stage">
+      <div class="stage-glow"></div>
+      <div class="balls-container" id="ballsContainer">
+        <div class="ball white-ball" id="b1"><span class="ball-text">?</span></div>
+        <div class="ball white-ball" id="b2"><span class="ball-text">?</span></div>
+        <div class="ball white-ball" id="b3"><span class="ball-text">?</span></div>
+        <div class="ball white-ball" id="b4"><span class="ball-text">?</span></div>
+        <div class="ball white-ball" id="b5"><span class="ball-text">?</span></div>
+        <div class="ball special-ball" id="b6"><span class="ball-text">?</span></div>
+      </div>
+    </div>
+
+    <!-- Generate button -->
+    <button class="generate-btn" onclick="generateNumbers()">
+      GENERATE NUMBERS <span class="dice">&#9861;</span>
+    </button>
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <button class="action-btn" onclick="savePick()">
+        <span class="action-icon">&#9733;</span>
+        <span>SAVE PICK</span>
+      </button>
+      <button class="action-btn" onclick="copyPick()">
+        <span class="action-icon copy-icon">&#10697;</span>
+        <span>COPY PICK</span>
+      </button>
+      <button class="action-btn" onclick="showHistory()">
+        <span class="action-icon">&#8987;</span>
+        <span>HISTORY</span>
+      </button>
+    </div>
+
+    <!-- Daily pick banner -->
+    <div class="daily-banner">
+      <div class="daily-left">
+        <div class="sun-icon">&#9728;</div>
+        <div class="daily-text">
+          <div class="daily-title">DAILY LUCKY PICK</div>
+          <div class="daily-sub">Get one lucky pick per game per day.</div>
+        </div>
+      </div>
+      <button class="daily-btn" onclick="getDailyPick()">&#127873; GET TODAY'S PICK</button>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- History modal -->
+    <div class="modal-overlay" id="historyModal" onclick="closeHistory(event)">
+      <div class="modal">
+        <div class="modal-header">
+          <span>PICK HISTORY</span>
+          <button class="modal-close" onclick="closeHistoryBtn()">&#10005;</button>
+        </div>
+        <div class="modal-body" id="historyList"></div>
+        <button class="clear-btn" onclick="clearHistory()">CLEAR HISTORY</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

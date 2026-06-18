@@ -1,0 +1,757 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: #04070d;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  font-family: 'Arial Black', 'Arial', sans-serif;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 0 calc(24px + env(safe-area-inset-bottom));
+  background: #04070d;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── Stage lighting container ── */
+.spotlights {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* ── Spotlight beams (fan from upper-left) ── */
+.beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 78%;
+}
+
+/* Each beam is a trapezoid polygon fanning out from ~(30%,0) */
+.beam-b1 {
+  background: linear-gradient(180deg, rgba(15,75,255,0.55) 0%, transparent 85%);
+  clip-path: polygon(27% 0%, 33% 0%, 4% 100%, -8% 100%);
+}
+.beam-b2 {
+  background: linear-gradient(180deg, rgba(25,95,255,0.5) 0%, transparent 85%);
+  clip-path: polygon(29% 0%, 36% 0%, 18% 100%, 6% 100%);
+}
+.beam-b3 {
+  /* brightest center beam */
+  background: linear-gradient(180deg, rgba(80,160,255,0.65) 0%, transparent 80%);
+  clip-path: polygon(30% 0%, 38% 0%, 38% 100%, 24% 100%);
+}
+.beam-b4 {
+  background: linear-gradient(180deg, rgba(35,105,255,0.45) 0%, transparent 80%);
+  clip-path: polygon(32% 0%, 42% 0%, 58% 100%, 42% 100%);
+}
+.beam-b5 {
+  background: linear-gradient(180deg, rgba(20,80,255,0.3) 0%, transparent 75%);
+  clip-path: polygon(35% 0%, 47% 0%, 78% 100%, 62% 100%);
+}
+
+/* Gold beams from upper-right */
+.beam-g1 {
+  background: linear-gradient(190deg, rgba(255,170,0,0.45) 0%, transparent 75%);
+  clip-path: polygon(68% 0%, 100% 0%, 100% 100%, 92% 100%);
+}
+.beam-g2 {
+  background: linear-gradient(185deg, rgba(255,210,50,0.3) 0%, transparent 70%);
+  clip-path: polygon(58% 0%, 72% 0%, 100% 100%, 88% 100%);
+}
+
+/* ── Ambient color pools ── */
+.ambient {
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* Blue source glow – upper left where beams originate */
+.ambient-blue {
+  top: -18%;
+  left: -18%;
+  width: 75%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(20,80,255,0.5) 0%, transparent 65%);
+}
+
+/* Red side glow – left mid (Powerball branding) */
+.ambient-red-side {
+  top: 30%;
+  left: -25%;
+  width: 55%;
+  height: 50%;
+  background: radial-gradient(ellipse, rgba(210,20,0,0.32) 0%, transparent 70%);
+}
+
+/* Red bottom-left warm spill */
+.ambient-red-bottom {
+  bottom: 5%;
+  left: -15%;
+  width: 55%;
+  height: 35%;
+  background: radial-gradient(ellipse, rgba(190,15,0,0.28) 0%, transparent 70%);
+}
+
+/* Gold source glow – upper right (Mega Millions branding) */
+.ambient-gold {
+  top: -18%;
+  right: -18%;
+  width: 70%;
+  height: 55%;
+  background: radial-gradient(ellipse, rgba(255,140,0,0.35) 0%, transparent 65%);
+}
+
+/* ── Halftone dot textures on sides ── */
+.dots {
+  position: absolute;
+  top: 8%;
+  width: 200px;
+  height: 45%;
+}
+
+.dots-left {
+  left: 0;
+  background-image: radial-gradient(circle, rgba(215,18,0,0.7) 2px, transparent 2px);
+  background-size: 13px 13px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 100% at 0% 50%, black 10%, transparent 75%);
+  mask-image:         radial-gradient(ellipse 85% 100% at 0% 50%, black 10%, transparent 75%);
+}
+
+.dots-right {
+  right: 0;
+  background-image: radial-gradient(circle, rgba(230,155,5,0.65) 2px, transparent 2px);
+  background-size: 13px 13px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 100% at 100% 50%, black 10%, transparent 75%);
+  mask-image:         radial-gradient(ellipse 85% 100% at 100% 50%, black 10%, transparent 75%);
+}
+
+/* ── Stage floor light (bright blue ellipse under balls) ── */
+.floor-light {
+  position: absolute;
+  bottom: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  height: 90px;
+  background: radial-gradient(ellipse, rgba(30,110,255,0.55) 0%, rgba(10,60,200,0.2) 40%, transparent 70%);
+  filter: blur(10px);
+}
+
+/* ── All content above spotlights ── */
+.logos, .title-block, .section-label, .game-selector, .game-rule,
+.balls-label, .stage, .generate-btn, .actions, .daily-banner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Logos ── */
+.logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 22px 20px 10px;
+}
+
+.logo-divider {
+  color: #888;
+  font-size: 28px;
+  font-weight: 100;
+}
+
+.powerball-logo {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #cc1a1a, #ff4444);
+  border-radius: 30px;
+  padding: 5px 14px;
+  box-shadow: 0 0 14px rgba(255, 50, 50, 0.5);
+}
+
+.logo-power {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.logo-ball-badge {
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  border-radius: 12px;
+  padding: 2px 7px;
+  margin-left: 5px;
+}
+
+.mega-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.logo-mega {
+  color: #1a7fff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.logo-millions {
+  color: #ffd700;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* ── Title ── */
+.title-block {
+  text-align: center;
+  padding: 8px 20px 4px;
+}
+
+.day-label {
+  font-size: clamp(28px, 10vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255,255,255,0.3);
+  letter-spacing: 3px;
+  line-height: 1.1;
+}
+
+.title-main {
+  font-size: clamp(28px, 10vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1.05;
+}
+
+.title-picks {
+  font-size: clamp(36px, 12.5vw, 52px);
+  font-weight: 900;
+  background: linear-gradient(180deg, #ffe066 0%, #f5a200 50%, #c97000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px;
+  line-height: 1.1;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 6px rgba(255,180,0,0.4));
+}
+
+.subtitle {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 4px;
+  font-family: Arial, sans-serif;
+  font-style: normal;
+}
+
+/* ── Section labels ── */
+.section-label {
+  text-align: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 18px 0 10px;
+}
+
+/* ── Game selector ── */
+.game-selector {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px;
+}
+
+.game-btn {
+  flex: 1;
+  min-height: 48px;
+  padding: 12px 10px;
+  border-radius: 30px;
+  font-size: clamp(12px, 3.5vw, 14px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  touch-action: manipulation;
+  transition: all 0.25s ease;
+}
+
+.game-btn.active {
+  background: linear-gradient(135deg, #cc1a1a 0%, #ff3333 100%);
+  color: #fff;
+  border-color: #ff6666;
+  box-shadow: 0 0 18px rgba(255, 50, 50, 0.55);
+}
+
+.game-btn:not(.active) {
+  background: rgba(255,255,255,0.05);
+  color: #7ab8ff;
+  border-color: #3388ff;
+  box-shadow: 0 0 10px rgba(50, 130, 255, 0.2);
+}
+
+.game-rule {
+  text-align: center;
+  color: #bbb;
+  font-size: 12.5px;
+  font-family: Arial, sans-serif;
+  margin: 10px 20px 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 8px 16px;
+}
+
+/* ── Stage and balls ── */
+.balls-label {
+  color: #ffd700;
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 14px 10px 28px;
+}
+
+.stage-glow {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  height: 50px;
+  background: radial-gradient(ellipse, rgba(50,140,255,0.75) 0%, rgba(20,80,255,0.35) 45%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(6px);
+}
+
+.stage-glow::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 24px;
+  background: radial-gradient(ellipse, rgba(120,190,255,0.65) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(3px);
+}
+
+.balls-container {
+  display: flex;
+  gap: clamp(5px, 1.8vw, 10px);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.ball {
+  width: clamp(42px, 13vw, 58px);
+  height: clamp(42px, 13vw, 58px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.ball.pop {
+  animation: ballPop 0.4s ease;
+}
+
+@keyframes ballPop {
+  0%   { transform: scale(0.6); opacity: 0.4; }
+  60%  { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.white-ball {
+  background: radial-gradient(circle at 38% 32%, #ffffff 0%, #d0d8e8 40%, #8a9ab8 80%, #5a6a88 100%);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.3),
+    0 4px 18px rgba(0,0,0,0.7),
+    inset 0 -4px 8px rgba(0,0,0,0.25),
+    0 0 22px rgba(100,160,255,0.45);
+}
+
+.special-ball {
+  background: radial-gradient(circle at 38% 32%, #ff8080 0%, #cc2222 45%, #880000 85%, #550000 100%);
+  box-shadow:
+    0 0 0 2px rgba(255,120,120,0.4),
+    0 4px 18px rgba(0,0,0,0.7),
+    inset 0 -4px 8px rgba(0,0,0,0.3),
+    0 0 22px rgba(255,60,60,0.55);
+}
+
+/* mega ball gold variant */
+.mega-ball {
+  background: radial-gradient(circle at 38% 32%, #ffe080 0%, #d4900a 45%, #8a5500 85%, #553300 100%);
+  box-shadow:
+    0 0 0 2px rgba(255,210,80,0.4),
+    0 4px 18px rgba(0,0,0,0.7),
+    inset 0 -4px 8px rgba(0,0,0,0.3),
+    0 0 22px rgba(255,190,0,0.5);
+}
+
+.ball-text {
+  color: #fff;
+  font-size: clamp(17px, 5vw, 22px);
+  font-weight: 900;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  line-height: 1;
+  user-select: none;
+}
+
+.ball-text.small {
+  font-size: clamp(13px, 3.8vw, 16px);
+}
+
+/* ── Generate button ── */
+.generate-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 24px;
+  width: calc(100% - 48px);
+  min-height: 58px;
+  padding: 16px 18px;
+  border-radius: 40px;
+  border: none;
+  background: linear-gradient(135deg, #1a9c1a 0%, #28c828 50%, #1a9c1a 100%);
+  color: #fff;
+  font-size: clamp(15px, 4.2vw, 18px);
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 0 24px rgba(40, 200, 40, 0.5), 0 4px 16px rgba(0,0,0,0.5);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.generate-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 14px rgba(40, 200, 40, 0.4), 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.dice {
+  font-size: 22px;
+}
+
+/* ── Action buttons ── */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 18px 20px 0;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 72px;
+  padding: 14px 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  color: #fff;
+  font-size: clamp(10px, 2.8vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background 0.2s ease;
+}
+
+.action-btn:hover {
+  background: rgba(255,255,255,0.11);
+}
+
+.action-icon {
+  font-size: 22px;
+  color: #ffd700;
+  line-height: 1;
+}
+
+/* ── Daily banner ── */
+.daily-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 16px 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 14px 14px;
+}
+
+.daily-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.sun-icon {
+  font-size: 32px;
+  color: #ffd700;
+  filter: drop-shadow(0 0 8px rgba(255,215,0,0.7));
+  flex-shrink: 0;
+}
+
+.daily-title {
+  color: #ffd700;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.daily-sub {
+  color: #aaa;
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  margin-top: 2px;
+}
+
+.daily-btn {
+  background: linear-gradient(135deg, #f5a200 0%, #ffd700 50%, #f5a200 100%);
+  color: #1a0a00;
+  font-size: clamp(10px, 2.8vw, 11.5px);
+  font-weight: 900;
+  border: none;
+  border-radius: 24px;
+  min-height: 48px;
+  padding: 12px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  touch-action: manipulation;
+  box-shadow: 0 0 14px rgba(255,180,0,0.45);
+  transition: transform 0.1s ease;
+  flex-shrink: 0;
+}
+
+.daily-btn:active {
+  transform: scale(0.96);
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: calc(40px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(30, 30, 30, 0.95);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.15);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── History modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal {
+  background: #0d1526;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 430px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px 0;
+}
+
+.history-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.history-item-game {
+  color: #ffd700;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.history-item-date {
+  color: #666;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.history-balls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.h-ball {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.h-ball.white {
+  background: radial-gradient(circle at 35% 30%, #fff, #aab8cc, #6688aa);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.h-ball.red {
+  background: radial-gradient(circle at 35% 30%, #ff8080, #cc2222, #880000);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.h-ball.gold {
+  background: radial-gradient(circle at 35% 30%, #ffe080, #d4900a, #8a5500);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.empty-history {
+  text-align: center;
+  color: #555;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  padding: 30px 0;
+}
+
+.clear-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px;
+  background: rgba(200,40,40,0.15);
+  border: 1px solid rgba(200,40,40,0.3);
+  border-radius: 10px;
+  color: #ff6666;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: rgba(200,40,40,0.25);
+}
+
+/* ── Desktop centering ── */
+@media (min-width: 431px) {
+  body { align-items: flex-start; }
+  .app { box-shadow: 0 0 60px rgba(0,0,0,0.8); }
+}
+
+/* ── Very small phones (< 340px) ── */
+@media (max-width: 340px) {
+  .title-block { padding: 6px 12px 2px; }
+  .logos { padding: 16px 12px 8px; }
+  .daily-banner { flex-direction: column; align-items: flex-start; }
+  .daily-btn { width: 100%; justify-content: center; }
+}
