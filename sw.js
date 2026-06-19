@@ -1,5 +1,5 @@
-const CACHE = 'joe-lucky-v1';
-const ASSETS = ['/index.html', '/style.css', '/app.js', '/icon.svg', '/manifest.json'];
+const CACHE = 'joe-lucky-v2';
+const ASSETS = ['/index.html', '/style.css', '/app.js', '/icon.svg', '/manifest.json', '/powerball-logo.svg', '/mega-logo.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
