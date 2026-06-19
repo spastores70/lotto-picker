@@ -785,7 +785,8 @@ body {
   line-height: 0;
 }
 
-#qrCanvas {
+#qrContainer canvas,
+#qrContainer img {
   display: block;
   border-radius: 4px;
 }

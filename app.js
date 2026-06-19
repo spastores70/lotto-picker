@@ -146,7 +146,7 @@ function showQR() {
   if (!currentNumbers) { showToast('Generate numbers first!'); return; }
   const g = GAMES[currentGame];
   const specialLabel = currentGame === 'mega' ? 'Mega Ball' : 'Powerball';
-  const text = `${g.label}\n${currentNumbers.whites.join(' - ')} | ${specialLabel}: ${currentNumbers.special}`;
+  const text = `${g.label}: ${currentNumbers.whites.join('-')} | ${specialLabel}: ${currentNumbers.special}`;
 
   document.getElementById('qrGameLabel').textContent = g.label;
 
@@ -154,11 +154,23 @@ function showQR() {
   document.getElementById('qrNumbers').innerHTML =
     `${currentNumbers.whites.join(' &middot; ')} <span class="${specialClass}">&#9679; ${currentNumbers.special}</span>`;
 
-  const size = Math.min(Math.round(window.innerWidth * 0.62), 250);
-  const canvas = document.getElementById('qrCanvas');
-  QRCode.toCanvas(canvas, text, { width: size, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
-
+  // Show modal first so the container has real dimensions
   document.getElementById('qrModal').classList.add('open');
+
+  // Clear previous QR and generate new one after paint
+  const container = document.getElementById('qrContainer');
+  container.innerHTML = '';
+  const size = Math.min(Math.round(window.innerWidth * 0.62), 250);
+  requestAnimationFrame(() => {
+    new QRCode(container, {
+      text,
+      width: size,
+      height: size,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M,
+    });
+  });
 }
 
 function closeQR(e) {
