@@ -1,0 +1,18 @@
+{
+  "name": "Joe Lucky Lotto Picks",
+  "short_name": "Joe Lucky",
+  "description": "Your lucky Powerball and Mega Millions number picker",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#04070d",
+  "theme_color": "#04070d",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

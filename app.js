@@ -190,5 +190,9 @@ function showToast(msg) {
 
 document.getElementById('dayLabel').textContent = 'JOE';
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
 // Init special ball class on load
 document.getElementById('b6').className = 'ball ' + GAMES[currentGame].specialClass;
