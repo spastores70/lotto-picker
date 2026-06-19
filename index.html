@@ -93,12 +93,29 @@
         <span>SAVE PICK</span>
       </button>
       <button class="action-btn" onclick="copyPick()">
-        <span class="action-icon copy-icon">&#10697;</span>
+        <span class="action-icon">&#10697;</span>
         <span>COPY PICK</span>
       </button>
       <button class="action-btn" onclick="showHistory()">
         <span class="action-icon">&#8987;</span>
         <span>HISTORY</span>
+      </button>
+      <button class="action-btn" onclick="showQR()">
+        <span class="action-icon">
+          <svg class="qr-svg-icon" width="26" height="26" viewBox="0 0 26 26" fill="currentColor">
+            <rect x="1" y="1" width="10" height="10" rx="1.5" fill="none" stroke="#ffd700" stroke-width="2"/>
+            <rect x="4" y="4" width="4" height="4" rx="0.5"/>
+            <rect x="15" y="1" width="10" height="10" rx="1.5" fill="none" stroke="#ffd700" stroke-width="2"/>
+            <rect x="18" y="4" width="4" height="4" rx="0.5"/>
+            <rect x="1" y="15" width="10" height="10" rx="1.5" fill="none" stroke="#ffd700" stroke-width="2"/>
+            <rect x="4" y="18" width="4" height="4" rx="0.5"/>
+            <rect x="15" y="15" width="4" height="4" rx="0.5"/>
+            <rect x="21" y="15" width="4" height="4" rx="0.5"/>
+            <rect x="15" y="21" width="4" height="4" rx="0.5"/>
+            <rect x="21" y="21" width="4" height="4" rx="0.5"/>
+          </svg>
+        </span>
+        <span>QR CODE</span>
       </button>
     </div>
 
@@ -112,6 +129,21 @@
         </div>
       </div>
       <button class="daily-btn" onclick="getDailyPick()">&#127873; GET TODAY'S PICK</button>
+    </div>
+
+    <!-- QR code modal -->
+    <div class="modal-overlay qr-overlay" id="qrModal" onclick="closeQR(event)">
+      <div class="qr-card">
+        <div class="qr-card-header">
+          <span id="qrGameLabel">POWERBALL</span>
+          <button class="modal-close" onclick="closeQRBtn()">&#10005;</button>
+        </div>
+        <div class="qr-scan-area">
+          <canvas id="qrCanvas"></canvas>
+        </div>
+        <div class="qr-numbers" id="qrNumbers"></div>
+        <p class="qr-instruction">Show this QR code at the store to scan</p>
+      </div>
     </div>
 
     <!-- Toast notification -->
@@ -131,6 +163,7 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

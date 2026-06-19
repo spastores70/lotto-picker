@@ -142,6 +142,33 @@ function getHistory() {
   catch { return []; }
 }
 
+function showQR() {
+  if (!currentNumbers) { showToast('Generate numbers first!'); return; }
+  const g = GAMES[currentGame];
+  const specialLabel = currentGame === 'mega' ? 'Mega Ball' : 'Powerball';
+  const text = `${g.label}\n${currentNumbers.whites.join(' - ')} | ${specialLabel}: ${currentNumbers.special}`;
+
+  document.getElementById('qrGameLabel').textContent = g.label;
+
+  const specialClass = currentGame === 'mega' ? 'qr-mega-special' : 'qr-special';
+  document.getElementById('qrNumbers').innerHTML =
+    `${currentNumbers.whites.join(' &middot; ')} <span class="${specialClass}">&#9679; ${currentNumbers.special}</span>`;
+
+  const size = Math.min(Math.round(window.innerWidth * 0.62), 250);
+  const canvas = document.getElementById('qrCanvas');
+  QRCode.toCanvas(canvas, text, { width: size, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+
+  document.getElementById('qrModal').classList.add('open');
+}
+
+function closeQR(e) {
+  if (e.target === document.getElementById('qrModal')) closeQRBtn();
+}
+
+function closeQRBtn() {
+  document.getElementById('qrModal').classList.remove('open');
+}
+
 function showHistory() {
   const history = getHistory();
   const list = document.getElementById('historyList');
